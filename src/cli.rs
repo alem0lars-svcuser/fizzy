@@ -1,12 +1,28 @@
+/// CLI module
+///
+/// Provides facilities to build command line user interactions.
+///
+/// # CommandLine arguments
+///
+/// Part of the public API are for parsing commandline arguments:
+///
+/// ```
+/// let matches = fizzy::cli::build_cli().get_matches();
+/// let cli_args = fizzy::cli::parse_arguments(&matches);
+/// ```
+///
+
 use clap::{Arg, App, ArgMatches};
 use std::path::Path;
 
+/// Fizzy's high-level representation of commandline arguments.
 pub struct CliArgs<'a> {
     pub cfg_file_path: Option<&'a Path>,
     pub verbosity_level: u64,
     pub simulate: bool,
 }
 
+/// Build commandline arguments, specifying the allowed values.
 pub fn build_cli() -> App<'static, 'static> {
     return app_from_crate!()
         .arg(Arg::with_name("cfg")
@@ -30,6 +46,7 @@ pub fn build_cli() -> App<'static, 'static> {
             .help("Sets the level of verbosity"));
 }
 
+/// Parse the arguments into fizzy's representation of commandline arguments.
 pub fn parse_arguments<'a>(matches: &'a ArgMatches) -> CliArgs<'a> {
     let cfg_file_path = match matches.value_of("cfg") {
         Some(val) => Some(Path::new(val)),
@@ -45,6 +62,7 @@ pub fn parse_arguments<'a>(matches: &'a ArgMatches) -> CliArgs<'a> {
     };
 }
 
+/// Validate if the provided argument is an existing file.
 fn is_valid_cfg_file(val: String) -> Result<(), String> {
     let cfg_file_path = Path::new(&val);
 
